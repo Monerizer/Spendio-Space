@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build:client"
+  functions = "netlify/functions"
+  publish = "dist/spa"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@netlify/functions"]
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

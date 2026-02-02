@@ -1,0 +1,41 @@
+app = "spendio-space"
+primary_region = "iad"
+
+[build]
+  builder = "heroku"
+  buildpacks = ["heroku/nodejs"]
+
+[env]
+  # Environment variables are set via Fly.io secrets
+  # Set OPENAI_API_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY in Fly.io
+
+[deploy]
+  strategy = "rolling"
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 3000
+  processes = ["app"]
+
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 250
+    soft_limit = 200
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+[checks]
+  [checks.status]
+    type = "http"
+    interval = "10s"
+    timeout = "5s"
+    grace_period = "5s"
+    method = "get"
+    path = "/api/health"
